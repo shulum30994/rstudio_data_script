@@ -27,7 +27,7 @@ efficiencies(sfa2)
 indeks_et <- efficiencies(sfa2) #simpan indeks et menjadi sebuah vector
 write.csv(indeks_et, file = 'indeks_efisiensi.csv') #konversi vektor ke format file .csv
 
-##### MEMBUAT VISUALISASI EFISIENSI TEKNIS MENGGNAKAN ggplot2 ######
+##### VISUALISASI EFISIENSI TEKNIS MENGGNAKAN ggplot2 ######
 library(ggplot2)
 library(dplyr)
 persentase_et <- visualisasi_frontier%>%filter(kategori =='Technical Efficiency (%)' | kategori == 'Potential Output (%)')
