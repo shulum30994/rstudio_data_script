@@ -10,6 +10,7 @@ install.packages(lmtest)
 library(olsrr)
 library(stargazer)
 library(lmtest)
+library(tseries)
 
 #attach dan beri nama dataset
 attach(dataset_regresi)
@@ -21,31 +22,30 @@ summary(dataset_regresi)
 #mencoba menggunakan persamaan analisis regresi
 model1 <- lm(income~output+price+labour+transport)
 
-#melihat hasil analisis regresi dari model1
-summary(model1)
-
-#mengubah variabel dummy menjadi factor
-dummy_local <- as.factor()
-dummy_edu <- as.factor()
-
-#regresi dengan variabel dummy sebagai factor
+#regresi dengan variabel dummy
 model2 <- lm(income~output+price+local)
-model3 <- lm(income~output+price+edu_cat)
-
-#melihat hasil analisis regresi dari model2 dan model3
-summary(model2)
-summary(model3)
+model3 <- lm(income~output+price+education)
 
 #--------uji asumsi klasik---------
 #uji normalitas
-jarque.bera.test()
-shapiro.wilk.test()
+jarque.bera.test(model1$residuals)
+shapiro.test(model1$residuals)
 
 #uji homoskedastisitas menggunakan BP-test
-lmtest::bptest()
+lmtest::bptest(model1)
 
 #uji autokorelasi
-lmtest::dwtest()
+lmtest::dwtest(model1)
 
 #uji multikolinearitas
-ols_vif_tol()
+ols_vif_tol(model1)
+
+#melihat hasil analisis regresi dari model2 dan model3
+summary(model1)
+summary(model2)
+summary(model3)
+
+#mengubah output ke format txt
+stargazer(model1, type = "text", digits = 2, output="fit_model1.txt")
+stargazer(model2, type = "text", digits = 2, output="fit_model2.txt")
+stargazer(model3, type = "text", digits = 2, output="fit_model3.txt")
