@@ -1,0 +1,60 @@
+#------INDONESIA TEMP-CHANGE-----
+ind_change <- read.csv('https://raw.githubusercontent.com/shulum30994/rstudio_exercises/main/ind_temp_change.csv',header = T,sep = ';')
+
+indonesia_temp <- ts(ind_change$temp_change, start = c(1961,1), end=c(2020,12), frequency=12)
+
+#simple moving average
+indonesia_sm <- ma(indonesia_temp, order=12) # 12 month moving average
+lines(indonesia_sm, col="red") # plot
+
+# Simple exponential smoothing: Level Only
+es_indonesia_temp <- hw(indonesia_temp, initial = 'optimal', h=10*12, beta=NULL, gamma=NULL) # h is the no. periods to forecast
+
+# Double Exponential smoothing: Level and Trend components
+double_es_indonesia_temp <- hw(indonesia_temp, initial = 'optimal', h=10*12, gamma=NULL)
+
+# Holt Winters: Level, Trend and Seasonality
+hw_indonesia_temp <- hw(indonesia_temp, initial = 'optimal', h=10*12)
+
+plot(es_indonesia_temp)
+plot(double_es_indonesia_temp)
+accuracy(es_indonesia_temp) # calculate accuracy measures
+
+#plot time series data of indonesia_temp
+plot(indonesia_temp)
+
+#boxplot of time-series object by cycle
+boxplot(indonesia_temp~cycle(indonesia_temp))
+
+#Auto Correlation Function (ACF)
+#decompose (multiplicative)
+dindonesia_temp <-decompose(indonesia_temp,'multiplicative')
+
+#decompose (additive)
+add_indonesia_temp <- decompose(indonesia_temp,'additive')
+
+#plot decomposed data
+plot(dindonesia_temp)
+plot(add_indonesia_temp)
+
+#To look a trend in time-series data
+plot(indonesia_temp)+abline(reg=lm(indonesia_temp~time(indonesia_temp)))
+
+#Calculate ARIMA using auto.arima method
+indonesia_arima <- auto.arima(indonesia_temp)
+indonesia_arima
+
+#by using 'trace' to show all arima selection
+auto.arima(indonesia_temp, ic='aic', trace = TRUE)
+
+#checking the residuals in ARIMA models
+plot.ts(indonesia_arima$residuals)
+
+#acf and pacf from the model
+acf(ts(indonesia_arima$residuals),main='ACF Residuals')
+pacf(ts(indonesia_arima$residuals),main='PACF Residuals')
+
+#forecast based on selected ARIMA models
+indonesia_forecast <- forecast(indonesia_arima,level = c(95), h=10*12)
+indonesia_forecast
+plot(indonesia_forecast)
