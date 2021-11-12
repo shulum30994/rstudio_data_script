@@ -1,0 +1,69 @@
+##### TAMBAHKAN DATASET DARI REPOSITORY GitHub ####
+dataset_visualisasi <- read.csv('https://raw.githubusercontent.com/shulum30994/rstudio_exercises/main/data_tembakau.csv',header = T,sep = ';')
+
+##### FUNGSI plot() UNTUK MENAMPILKAN GRAFIK SECARA SEDERHANA #####
+plot(dataset_visualisasi$nomor, dataset_visualisasi$usia, type = 'p')
+
+##### AKTIFKAN PACKAGE ggplot2 ######
+library(ggplot2)
+
+##### PEMAHAMAN SETIAP LAYER PACKAGE ggplot2 ######
+ggplot(dataset_visualisasi) #layer dasar (canvas)
+ggplot(dataset_visualisasi)+aes(x=nomor,y=usia) #komponen aes dan mapping
+grafik <- ggplot(dataset_visualisasi)+aes(x=nomor,y=usia) #simpan grafik ke dalam vektor yang bernama grafik
+
+###### GRAFIK BATANG #######
+ggplot(dataset_visualisasi)+aes(x=kabupaten)+geom_bar() #argumen geom_bar()
+ggplot(dataset_visualisasi)+aes(x=kabupaten,y=usia)+geom_bar(stat='summary',fun='mean') #geom_bar dengan tambahan sumbu y sebagai variabel usia
+
+###### GRAFIK GARIS ######
+library(dplyr) #aktifkan package dplyr
+data_beras <- read.csv('https://raw.githubusercontent.com/shulum30994/rstudio_exercises/main/beras.csv', header = T, sep = ';') #tambahkan dataset sembako sebagai bahan visualisasi
+data_beras %>% filter(kategori=='Beras Kualitas Bawah 1') #memilih data sembako beras saja
+ggplot(data_beras %>% filter(kategori=='Beras Kualitas Bawah 1'))+aes(x=as.Date(tanggal),y=harga)+geom_line()
+
+###### GRAFIK BOXPLOT ######
+ggplot(dataset_visualisasi)+aes(x=kabupaten,y=usia)+geom_boxplot() #plotting grafik boxplot
+
+###### GRAFIK/DIAGRAM SCATTERPLOT ####
+data_produksi <- read.csv('https://raw.githubusercontent.com/shulum30994/rstudio_exercises/main/dataset_frontier.csv',header = T,sep = ',') #tambahkan dataset produksi & faktor produksi kentang
+ggplot(data_produksi)+aes(x=bibit,y=produksi)+geom_point() #plotting diagram pencar antara produksi kentang dengan bibit
+ggplot(data_produksi)+aes(x=bibit,y=produksi)+geom_point()+geom_smooth(method = lm) #penambahan geom_smooth agar nampak seperti garis regresi linear
+
+###### MENAMBAHKAN ATRIBUT WARNA GRAFIK ########
+ggplot(dataset_visualisasi)+aes(x=kabupaten,y=usia,fill=kabupaten)+geom_bar(stat='summary',fun='mean') #warna berdasarkan kabupaten tempat tinggal responden
+ggplot(data_beras %>% filter(kategori=='Beras Kualitas Bawah 1' | kategori=='Beras Kualitas Bawah 2'))+aes(x=as.Date(tanggal),y=harga,color=kategori)+geom_line() #setelah ditambah dengan kategori Beras Kualitas Bawah 2
+ggplot(dataset_visualisasi)+aes(x=kabupaten,y=usia,fill=kabupaten)+geom_boxplot() #plotting grafik boxplot dengan warna berdasarkan kabupaten
+
+###### MENGATUR/MEMBERIKAN LABEL SUMBU GRAFIK #######
+bar_chart <- ggplot(dataset_visualisasi)+aes(x=kabupaten,y=usia,fill=kabupaten)+geom_bar(stat='summary',fun='mean') #simpan objek grafik batang ke dalam sebuah vektor bar_chart
+line_graph <- ggplot(data_beras %>% filter(kategori=='Beras Kualitas Bawah 1' | kategori=='Beras Kualitas Bawah 2'))+aes(x=as.Date(tanggal),y=harga,color=kategori)+geom_line() #simpan objek grafik garis ke dalam sebuah vektor line_graph
+boxplot_digram <- ggplot(dataset_visualisasi)+aes(x=kabupaten,y=usia,fill=kabupaten)+geom_boxplot() #simpan objek boxplot ke dalam sebuah vektor boxplot_diagram
+diagram_pencar <- ggplot(data_produksi)+aes(x=bibit,y=produksi)+geom_point()+geom_smooth(method = lm) #simpan objek scatter plot ke dalam sebuah vektor diagram_pencar
+
+bar_chart+xlab('Kabupaten')+ylab('Rata-rata Usia Responden (tahun)')+theme(legend.position = 'none')
+
+install.packages('directlabels')
+
+line_graph+xlab('Waktu')+ylab('Harga (Rp/kg)') #tambahkan judul untuk sumbu absis dan sumbu ordinat.
+
+line_graph+scale_x_date(expand = c(0.25, 0)) #menambah rentang waktu agar tidak terlalu rapat
+
+line_graph+scale_fill_manual(values=c('Beras Kualitas Bawah 1'='red','Beras Kualitas Bawah 2'='Blue')) #mengubah warna jenis beras menjadi warna merah dan biru saja
+
+line_graph+geom_dl(aes(label=kategori), method = list(dl.trans(x=x+.1), "last.points")) #menambahkan label di ujung garis perkembangan harga masing-masing jenis beras
+
+line_graph+xlab('Waktu')+ylab('Harga (Rp/kg)')+scale_x_date(expand = c(0.25, 0))+scale_fill_manual(values=c('Beras Kualitas Bawah 1'='red','Beras Kualitas Bawah 2'='Blue'))+geom_dl(aes(label=kategori), method = list(dl.trans(x=x+.1), "last.points"))+theme(legend.position = 'none') #hasil akhir modifikasi grafik garis
+
+boxplot_digram+xlab('Kabupaten')+ylab('Usia (tahun)')+theme(legend.position = 'none') #menambahkan label pada masing-masing sumbu
+
+diagram_pencar+xlab('Bibit (kg)')+ylab('Produksi (kg)') #menambahkan label pada masing-masing sumbu
+
+######## MENGATUR/MEMBERIKAN JUDUL GRAFIK ########
+bar_chart+xlab('Kabupaten')+ylab('Rata-rata Usia Responden (tahun)')+ggtitle('Rata-rata Usia Responden Berdasarkan Kabupaten')+theme(legend.position = 'none',plot.title = element_text(hjust = 0.5)) #menambahkan judul grafik batang dengan ggtitle
+
+line_graph+xlab('Waktu')+ylab('Harga (Rp/kg)')+scale_x_date(expand = c(0.25, 0))+scale_fill_manual(values=c('Beras Kualitas Bawah 1'='red','Beras Kualitas Bawah 2'='Blue'))+geom_dl(aes(label=kategori), method = list(dl.trans(x=x+.1), "last.points"))+ggtitle('Perkembangan Harga Beras Harian Kualitas Bawah 1 & 2 antara Tahun 2017-2021')+theme(legend.position = 'none',plot.title = element_text(hjust = 0.5)) #menambahkan judul grafik garis harga beras harian
+
+boxplot_digram+xlab('Kabupaten')+ylab('Usia (tahun)')+ggtitle('Boxplot Sebaran Usia Responden Berdasarkan Kabupaten')+theme(legend.position = 'none',plot.title = element_text(hjust = 0.5)) #menambahkan judul grafik pada boxplot
+
+diagram_pencar+xlab('Bibit (kg)')+ylab('Produksi (kg)')+ggtitle('Diagram Pencar Hubungan antara Faktor Produksi Bibit (kg) dengan Produksi Kentang (kg)')+theme(plot.title = element_text(hjust = 0.5)) #menambahkan judul grafik pada diagram pencar (scatter plot)
