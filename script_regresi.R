@@ -23,22 +23,29 @@ summary(dataset_regresi)
 model1 <- lm(income~output+price+labour+transport)
 
 #regresi dengan variabel dummy
-model2 <- lm(income~output+price+local)
+model2 <- lm(income~output+price+as.factor(local))
 model3 <- lm(income~output+price+education)
 
 #--------uji asumsi klasik---------
 #uji normalitas
 jarque.bera.test(model1$residuals)
 shapiro.test(model1$residuals)
+#H0 : Residual tersebar secara normal
+#H1 : Residual tidak tersebar secara normal
 
 #uji homoskedastisitas menggunakan BP-test
 lmtest::bptest(model1)
+#H0 : Tidak terjadi heteroskedastisitas
+#H1 : Terjadi heteroskedastisitas
 
 #uji autokorelasi
 lmtest::dwtest(model1)
+#H0 : tidak ada korelasi dalam disturbance terms
+#H1 : ada autorelasi dalam disturbance terms
 
 #uji multikolinearitas
 ols_vif_tol(model1)
+#Jika VIF>5 Terjadi Multikolinearitas
 
 #melihat hasil analisis regresi dari model2 dan model3
 summary(model1)
