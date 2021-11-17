@@ -21,13 +21,14 @@ efficiencies(sfa1) #output indeks efisiensi teknis masing-masing usahatani
 ###### ANALISIS FRONTIER DENGAN FAKTOR EFISIENSI TEKNIS ######
 sfa2 <- sfa(log(produksi)~log(bibit)+log(tk)+log(obat) | pendidikan+jak+pengalaman ,data = dataset_frontier)
 summary(sfa2)
+#Perhatikan nilai signifikansi variabel
+#Perhatikan nilai sigma-squared
+#Perhatikan nilai gamma
 efficiencies(sfa2)
 
 ##### MEMBUAT VISUALISASI INDEKS EFISIENSI TEKNIS (OPSIONAL) ######
 indeks_et <- efficiencies(sfa2) #simpan indeks et menjadi sebuah vector
 write.csv(indeks_et, file = 'indeks_efisiensi.csv') #konversi vektor ke format file .csv
-
-##### VISUALISASI EFISIENSI TEKNIS MENGGNAKAN ggplot2 ######
 library(ggplot2)
 library(dplyr)
 persentase_et <- visualisasi_frontier%>%filter(kategori =='Technical Efficiency (%)' | kategori == 'Potential Output (%)')
