@@ -7,6 +7,9 @@ indonesia_urban <- read.csv("https://raw.githubusercontent.com/shulum30994/rstud
 #### KONVERSI DATASET MENJADI TIME-SERIES OBJECT ####
 indonesia_ts1 <- ts(indonesia_urban$urban_pop, start=c(1961), end=c(2020))
 
+#### VISUALISASI DATASET YANG TELAH DI-KONVERSI ####
+plot(indonesia_ts1)
+
 #### MELAKUKAN ESTIMASI MODEL TREND ####
 trend_indonesia <- tslm(indonesia_ts ~ trend)
 
