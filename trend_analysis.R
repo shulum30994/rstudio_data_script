@@ -54,11 +54,14 @@ plot(dindonesia_temp) #mutiplikatif
 plot(add_indonesia_temp) #additif
 
 #Membuat model ARIMA dengan fungsi auto.arima()
-indonesia_arima <- auto.arima(indonesia_temp)
-indonesia_arima
+arima_indonesia_temp <- auto.arima(indonesia_temp)
+arima_indonesia_ts1 <- auto.arima(indonesia_ts1)
+arima_indonesia_temp
+arima_indonesia_ts1
 
 #Membuat model ARIMA dengan menampilkan seleksi model
 auto.arima(indonesia_temp, ic='aic', trace = TRUE)
+auto.arima(indonesia_ts1, ic='aic', trace = TRUE)
 
 #meramalkan nilai-nilai yang akan datang berdasarkan model ARIMA yang telah terpilih
 indonesia_forecast <- forecast(indonesia_arima,level = c(95), h=10*12)
