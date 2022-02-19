@@ -1,3 +1,11 @@
+###### KONEKSI DENGAN MARIADB #####
+library(DBI)
+con <- dbConnect(RMariaDB::MariaDB(), user='root', password='***')
+dbSendQuery(con, 'use utbk_db')
+
+#Mengambil dataset
+df <- dbFetch(dbSendQuery(con, 'select * from universitas limit 5,10'))
+
 ##### TAMBAHKAN DATASET DARI REPOSITORY GitHub ####
 dataset_visualisasi <- read.csv('https://raw.githubusercontent.com/shulum30994/rstudio_exercises/main/data_tembakau.csv',header = T,sep = ';')
 
