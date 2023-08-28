@@ -1,34 +1,35 @@
 library(plm)
-library(tidyverse)
+library(dplyr)
 library(lmtest)
+library(car)
 
 # Retrive data
 
 # Struktur data
 dataset %>%
   glimpse
-# Y   : Konversi lahan (%)
-# X1  : Populasi penduduk (ribu jiwa)
-# X2  : Proporsi lahan pertanian dengan luas propinsi
-# X3  : Produktivitas padi (kw/ha)
-# X4  : Harga gabah (Rp/kg)
-# X5  : Rasio PDRB pertanian terhadap PDRB Industri
-# X6  : Rasio PDRB pertanian terhadap PDRB
+# KONVERSI      : Konversi lahan (%)
+# POP           : Populasi penduduk (ribu jiwa)
+# RASIO.LAHAN   : Proporsi lahan pertanian dengan luas propinsi
+# PROTAS        : Produktivitas padi (kw/ha)
+# RASIO.INDU    : Rasio PDRB pertanian terhadap PDRB Industri
+# GABAH         : Harga gabah (Rp/kg)
+# RASIO.PDRB    : Rasio PDRB pertanian terhadap PDRB
 
 # Statistik Deskriptif data
 summary(dataset)
 
 # Visualisasi boxplot
-dataset %>%
-  ggplot()+
-  aes(x=tahun,y=log(abs(Y)))+
-  geom_boxplot()
+plotmeans(KONVERSI~TAHUN,main="Heterogeneitas Antar Tahun",data=dataset)
 
 # Pembuatan model
-panel <- log(abs(Y))~log(X1)+log(X2)+log(X3)+log(X4)+log(X5)+log(X6)
+# KONVERSI = POP + RASIO.LAHAN + PROTAS + RASIO.INDU + GABAH + RASIO.PDRB
+panel <- log(abs(KONVERSI))~log(POP)+log(RASIO.LAHAN)+log(PROTAS)+log(RASIO.INDU)+log(GABAH)+log(RASIO.PDRB)
 
 # Estimasi Model
 ## Pooled Regression (CEM)
+pool1 <- plm(panel,data = dataset,index = c('PROP','TAHUN'),model = "pooling")
+summary(pool1)
 
 ## Fix Effect Model (FEM)
 fem1 <- plm(panel,data=dataset,index=c('prop','tahun'),model='within')
