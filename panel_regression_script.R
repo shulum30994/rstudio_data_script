@@ -1,7 +1,7 @@
 library(plm)
 library(dplyr)
 library(lmtest)
-library(car)
+library(gplots)
 
 # Retrive data
 
@@ -32,25 +32,35 @@ pool1 <- plm(panel,data = dataset,index = c('PROP','TAHUN'),model = "pooling")
 summary(pool1)
 
 ## Fix Effect Model (FEM)
-fem1 <- plm(panel,data=dataset,index=c('prop','tahun'),model='within')
+fem1 <- plm(panel,data=dataset,index=c('PROP','TAHUN'),model='within')
 summary(fem1)
 fixef(fem1)
 
 ## Random Effect Model
-rem1 <- plm(panel,data=dataset,index=c('prop','tahun'),model='random')
+rem1 <- plm(panel,data=dataset,index=c('PROP','TAHUN'),model='random')
 summary(rem1)
 
 # Seleksi Model
+# Pool (CEM) vs REM (LM-test)
+plmtest(pool1,type = "bp")
+# H1 : REM lebih baik dibandingkan pool
+
 ## FEM vs CEM (Chow-test)
+pooltest(pool1,fem1)
+# H1 : FEM lebih baik dibandingkan pool
 
 ## FEM vs REM (Hausman-test)
 phtest(fem1,rem1)
+# H0 : REM
+# H1 : FEM
 
 # Uji asumsi klasik
 ## Homoskedastis
 bptest(fem1)
+# H0 : Homoskedastis
 
 ## Auto-korelasi
 pbgtest(fem1)
+# H0 : tidak ada autokorelasi
 
 # Penangangan pelanggaran asumsi klasik
