@@ -4,7 +4,7 @@ library(lmtest)
 library(gplots)
 
 # Retrive data
-
+dataset <- read.csv('dataset <- read.csv('https://raw.githubusercontent.com/shulum30994/rstudio_data_script/main/data_panel_workshop.csv')
 # Struktur data
 dataset %>%
   glimpse
@@ -62,5 +62,3 @@ bptest(fem1)
 ## Auto-korelasi
 pbgtest(fem1)
 # H0 : tidak ada autokorelasi
-
-# Penangangan pelanggaran asumsi klasik
