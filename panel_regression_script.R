@@ -14,7 +14,7 @@ dataset <- read.csv('https://raw.githubusercontent.com/shulum30994/rstudio_data_
 # Struktur data
 dataset %>%
   glimpse
-# KONVERSI      : Konversi lahan (%)
+# KONVERSI      : Konversi lahan (hektar)
 # POP           : Populasi penduduk (ribu jiwa)
 # RASIO.LAHAN   : Proporsi lahan pertanian dengan luas propinsi
 # PROTAS        : Produktivitas padi (kw/ha)
