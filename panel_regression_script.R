@@ -26,7 +26,7 @@ dataset %>%
 summary(dataset)
 
 # Visualisasi data sederhana
-plotmeans(KONVERSI~TAHUN,main="Heterogeneitas Antar Tahun",data=dataset)
+plotmeans(KONVERSI~TAHUN,main="Konversi Lahan antar Tahun",data=dataset)
 
 # Pembuatan model
 # KONVERSI = POP + RASIO.LAHAN + PROTAS + RASIO.INDU + GABAH + RASIO.PDRB
