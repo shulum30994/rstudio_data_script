@@ -44,3 +44,25 @@ indo1_area %>%
         axis.ticks.y = element_blank(),
         strip.text = element_blank(),
         legend.position = c(0.1,0.15))
+
+#### ET map VIZ ####
+# et_joined = after joined grouped dataset with spatial
+et_joined %>%
+  ggplot()+
+  geom_sf(aes(fill=perc))+
+  geom_text(et_grouped %>% mutate(label_baru=paste0(status,labels,","))%>% group_by(label_baru) %>% mutate(huruf=case_when(label_baru=="IRRIGATEDURBAN,"~"A.",label_baru=="IRRIGATEDVILLAGES/COUNTRYSIDE,"~"B.",label_baru=="NON-IRRIGATEDURBAN,"~"C.",label_baru=="NON-IRRIGATEDVILLAGES/COUNTRYSIDE,"~"D.")),
+            mapping = aes(label=huruf,x=92,y=5.2),color="black",fontface="bold")+
+  scale_fill_gradient2(low = "lightblue",midpoint=50,high = "darkblue",na.value = "gray71",breaks=c(25,50,75))+
+  facet_wrap(status ~ labels,nrow = 4,ncol = 1)+
+  labs(fill="Technical Efficiency (%) :",x="",y="")+
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        strip.text = element_blank(),
+        legend.title = element_text(face = "bold",
+                                    size = 11,
+                                    family = "monospace"),
+        legend.text = element_text(family = "monospace",
+                                   size=10.5),
+        legend.position = "bottom")
