@@ -13,13 +13,9 @@ data14<-data14 %>%
       if_else(R503B_II1!=0|R503B_II2!=0,2,
               if_else(R503B_III1!=0|R503B_III2!=0,3,0))
     ),
-    #JENIS_KONVERSI2 = case_when(
-    #	(R503B_I1!=0 & R503B_I2!=0 & R503B_II1!=0 & R503B_II2!=0 & R503B_III1!=0 & R503B_III2!=0) ~ 1,
-    #	(R503B_I1!=0 & R503B_II1!=0) ~ 2,
-    #	(R503B_I2!=0 & R503B_III1!=0) ~ 3,
-    #	(R503B_II2!=0 & R503B_III2!=0) ~ 4,
-    #	TRUE ~ 0
-    #	),
+    ELEMENTARY = case_when(B3_K7==2 ~ 1, TRUE ~ 0),
+    MID = case_when((B3_K7==3)|(B3_K7==4) ~ 1, TRUE ~ 0),
+    UNIV = case_when((B3_K7==5)|(B3_K7==6)|(B3_K7==7)|(B3_K7==8) ~ 1, TRUE ~ 0),
     AKSES_PASAR = if_else(B17_R1711A==1,1,0),
     SERTIPIKAT=if_else(R502A!=0|R502B!=0,1,0),
     KOPERASI=if_else(R1710A==1,1,0),
@@ -153,7 +149,7 @@ MULTINOM1 <- multinom(as.factor(KONVERSI_LAHAN)~as.factor(AKSES_PASAR)+R501D_K6+
 stargazer(MULTINOM1,
           #poktan.remit.urban,
           #koperasi.remit.urban,
-          title = "Reference:Tidak Konversi, 1=Konversi Sawah, 2=Konversi Non sawah, 3=Konversi Non Pertanian",
+          title = "Reference:Tidak Konversi, 1=Deforestasi, 2=Urbanisasi, 3=Deforestasi-Urbanisasi bersamaan",
           #column.labels = c(),
           intercept.bottom = FALSE,
           #apply.coef = exp,
