@@ -2,11 +2,14 @@ library(ResourceSelection)
 library(DescTools)
 library(stargazer)
 library(nnet)
+library(ggeffects)
+library(RColorBrewer)
 
 # Pedoman Konversi
 
 data14<-data14 %>%
   mutate(
+    GENDER = if_else(B3_K4==1,1,0),
     KONVERSI_LAHAN = if_else(R503A==1,1,0),
     JENIS_KONVERSI = if_else(
       R503B_I1!=0|R503B_I2!=0,1,
@@ -146,6 +149,10 @@ MODEL1 <- glm(as.factor(KONVERSI_LAHAN)~as.factor(AKSES_PASAR)+R501D_K6+R501E1_K
 
 MULTINOM1 <- multinom(as.factor(KONVERSI_LAHAN)~as.factor(AKSES_PASAR)+R501D_K6+R501E1_K6+B3_K5+as.factor(B3_K7)+jumlah_anggota_kel+B16F_K2+B16A_K2+as.factor(SERTIPIKAT)+as.factor(KOPERASI)+as.factor(POKTAN)+as.factor(KREDIT)+Total_Panjang+as.factor(DSUMA)+as.factor(DKALI)+as.factor(DBALI)+as.factor(DSULA)+as.factor(DPAPU)+as.factor(DPAPU)+as.factor(URBAN),data=data14 %>% na.omit())
 
+MULTINOM2 <- multinom(as.factor(KONVERSI_LAHAN)~as.factor(AKSES_PASAR)+as.factor(GENDER)+R501D_K6+R501E1_K6+B3_K5+as.factor(ELEMENTARY)+as.factor(MID)+as.factor(UNIV)+jumlah_anggota_kel+B16F_K2+B16A_K2+as.factor(SERTIPIKAT)+as.factor(KOPERASI)+as.factor(POKTAN)+as.factor(KREDIT)+Total_Panjang+as.factor(DSUMA)+as.factor(DKALI)+as.factor(DBALI)+as.factor(DSULA)+as.factor(DPAPU)+as.factor(DMALU)+as.factor(URBAN),data=data14 %>% na.omit())
+
+MULTINOM3 <- multinom(as.factor(JENIS_KONVERSI)~B5R1DK5+B5R1E1K2+B3K5+as.factor(GENDER)+as.factor(ELEMENTARY)+as.factor(MID)+as.factor(UNIV)+B16RA+B16RF+as.factor(KREDIT)+as.factor(DSUMA)+as.factor(DBALI)+as.factor(DSULA)+as.factor(DKALI)+as.factor(DMALU)+as.factor(DPAPU),data = data04%>%na.omit)
+
 stargazer(MULTINOM1,
           #poktan.remit.urban,
           #koperasi.remit.urban,
@@ -159,3 +166,13 @@ stargazer(MULTINOM1,
           report = ('vc*p'),
           type = "text",
           out = "multinom1c.txt")
+
+# Visualisasi nilai predicted
+ggpredict(MULTINOM2,terms = "R501E1_K6 [all]") %>%
+  ggplot()+
+  aes(x=x,y=predicted,colour=response.level)+
+  geom_smooth(se=FALSE,size=1.25)+
+  scale_fill_distiller(palette = "Blues",direction = -1)+
+  labs(title = "Predicted Probabilities of Land Converseion",
+       x="Total Farmlandd",y="Predicted Probability",fill="Type of Conversion:")+
+  theme_minimal()
