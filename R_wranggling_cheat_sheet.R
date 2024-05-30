@@ -11,3 +11,9 @@ data1 %>%
 # "kolom_baru" adalah nama kolom baru yang berisi nama-nama kolom yang sudah menjadi baris
 # "nilai_baru" adalah nama kolom baru yang berisi nilai dari kolom yang sudah menjadi baris
 # argumen "-kolom1" berarti diurutkan berdasarkan kolom1
+
+# melakukan index-match (MS Excel) di RStudio
+df1$col <- df2$kol1[match(df1$kol_id, df2$kol_id)]
+# col : dapat langsung diganti dengan nama kolom yang akan di-replace
+# kol1 : nilai kolom dari df2 yang akan di-replace ke col di df1
+# kol_id : kolom yang memiliki nilai sama antara df1 dan df2, bisa juga merupakan "primary key"
