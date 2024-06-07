@@ -17,3 +17,6 @@ df1$col <- df2$kol1[match(df1$kol_id, df2$kol_id)]
 # col : dapat langsung diganti dengan nama kolom yang akan di-replace
 # kol1 : nilai kolom dari df2 yang akan di-replace ke col di df1
 # kol_id : kolom yang memiliki nilai sama antara df1 dan df2, bisa juga merupakan "primary key"
+
+# melakukan filter (package dplyr) berdasarkan sebagian karakter/nilai yang ada di kolom
+df %>% filter(grepl("KEYWORD",kolom))
