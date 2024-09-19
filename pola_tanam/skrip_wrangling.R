@@ -93,31 +93,29 @@ pola_tanam<-pola_tanam %>%
   mutate(POLA=txt_paste(PADI,PALAWIJA,HORTI,PERKEBUNAN,KEHUTANAN,na.rm = T))
 
 pola_tanam %>%
-  select(KAB,POLA) %>%
+  select(POLA) %>%
   na.omit() %>%
   group_by(POLA) %>%
   count(POLA, sort = T) %>%
-  print(n=33)
+  mutate(PERC=(n/376650)*100) %>%
+  print(n=32)
 
-horti_jatim <- horti %>% select(ID_RUTA,KAB,B7_KODE_K2,
-                                B7_KODE_K3,
-                                B7_KODE_K4,
-                                B7_KODE_K5,
-                                B7_KODE_K6,
-                                B7_KODE_K7)
+pola_tanam %>%
+  select(POLA) %>%
+  filter(grepl("PADI",POLA)) %>%
+  na.omit() %>%
+  group_by(POLA) %>%
+  count(POLA, sort = T) %>%
+  print(n=32)
 
-ped.tanaman <- tanaman %>% select(KODE,TANAMAN)
+pola_tanam %>%
+  filter(grepl("PERKEBUNAN",POLA)) %>%
+  group_by(PROP_x) %>%
+  count(PROP_x)
 
-horti_jatim$HORTI1<-ped.tanaman$TANAMAN[match(horti_jatim$B7_KODE_K2,ped.tanaman$KODE)]
+POLA_HUT <- pola_tanam %>%
+  filter(grepl("KEHUTANAN",POLA)) %>%
+  group_by(PROP_x) %>%
+  count(PROP_x)
 
-horti_jatim$HORTI2<-ped.tanaman$TANAMAN[match(horti_jatim$B7_KODE_K3,ped.tanaman$KODE)]
-
-horti_jatim$HORTI3<-ped.tanaman$TANAMAN[match(horti_jatim$B7_KODE_K4,ped.tanaman$KODE)]
-
-horti_jatim$HORTI4<-ped.tanaman$TANAMAN[match(horti_jatim$B7_KODE_K5,ped.tanaman$KODE)]
-
-horti_jatim$HORTI5<-ped.tanaman$TANAMAN[match(horti_jatim$B7_KODE_K6,ped.tanaman$KODE)]
-
-horti_jatim$HORTI6<-ped.tanaman$TANAMAN[match(horti_jatim$B7_KODE_K7,ped.tanaman$KODE)]
-
-horti_jatim<-horti_jatim %>% mutate(POLA=paste2(horti_jatim[9:14],sep = "-"))
+POLA_HUT <- left_join(POLA_HUT,kode_propinisi,by=c("PROP_x"="kode"))
