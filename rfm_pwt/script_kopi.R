@@ -22,7 +22,7 @@ kopi_901212000 %>%
   theme(legend.position = "none")
 
 # convert new column into date type
-kopi_901212000 <- kopi_901212000 %>% mutate(YEAR_DATE=as.Date(strptime(YEAR_DATE,"%d/%m/%Y")),customer_id=DESTCTRY_L,revenue=VAL*NETWT)
+kopi_901212000 <- kopi_901212000 %>% mutate(YEAR_DATE=as.Date(strptime(YEAR_DATE,"%d/%m/%Y")),customer_id=DESTCTRY,revenue=VAL*NETWT)
 
 # check last transaction date
 kopi_901212000 %>% arrange(desc(YEAR_DATE)) %>% head(5)
