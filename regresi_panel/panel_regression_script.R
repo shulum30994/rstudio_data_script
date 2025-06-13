@@ -9,7 +9,7 @@ library(lmtest)
 library(gplots)
 
 # Retrive data
-dataset <- read.csv('https://raw.githubusercontent.com/shulum30994/rstudio_data_script/main/data_panel_workshop.csv')
+dataset <- read.csv('https://raw.githubusercontent.com/shulum30994/rstudio_data_script/refs/heads/main/regresi_panel/data_panel_workshop.csv')
 
 # Struktur data
 dataset %>%
