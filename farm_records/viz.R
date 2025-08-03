@@ -89,6 +89,7 @@ ggplot()+
                   # na.rm = TRUE)+
   theme(legend.position = "bottom")
 
+##### Tobacco and Red Pepper ####
 toba_red<-raw %>% 
   group_by(Commodities) %>%
   filter(Date==max(Date)|Commodities=="Tobacco"|Commodities=="Red Pepper") %>%
@@ -108,3 +109,42 @@ ggplot(toba_red)+
                    na.rm=T)+
   ylab("Cumulative Cost (¥)")+
   theme(legend.position = "none")
+
+##### Tobacco and Paddy #####
+tobacco_red_maize<-raw %>% 
+  group_by(Commodities) %>%
+  filter(Date==max(Date)|Commodities=="Tobacco"|Commodities=="Red Pepper"|Commodities=="Maize") %>%
+  select(Date,
+         Commodities,
+         Activity,
+         `Fee (Rp)`) %>%
+  mutate(relative_cumsum = cumsum(`Fee (Rp)`),
+         label=NA)
+
+label_max <- tobacco_red_maize %>%
+  group_by(Commodities) %>%
+  summarise(across(c("relative_cumsum"),.fns=max))
+
+label_max <-label_max %>%
+  mutate(Tanggal=c("2024-08-13 00:00:00",
+                "2024-09-22 00:00:00",
+                NA,
+                "2024-09-26 00:00:00"))
+
+tobacco_red_maize$label[which(tobacco_red_maize$relative_cumsum == max(tobacco_red_maize$relative_cumsum))] <- tobacco_red_maize$Commodities[which(tobacco_red_maize$relative_cumsum == max(tobacco_red_maize$relative_cumsum))]
+
+ggplot(tobacco_red_maize)+
+  aes(x=Date,y=relative_cumsum*0.0091,col=Commodities)+
+  geom_point(aes(col=Activity,size = `Fee (Rp)`))+
+  geom_line()+
+  geom_label_repel(aes(x=Tanggal,
+                       y=relative_cumsum*0.0091,
+                       label = Commodities),
+                   data = label_max)+
+  labs(title = "Cumulative Worker's Expense in Tobacco, Red Pepper and Maize farming in Period of Time",
+       y="Cumulative Cost (¥)")+
+  theme(legend.position = "none",
+        plot.title = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(size = 12, face = "bold.italic"),
+        axis.title.y = element_text(size = 12, face = "bold.italic")
+  )
