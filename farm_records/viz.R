@@ -1,6 +1,5 @@
 library(googlesheets4)
 library(tidyverse)
-library(directlabels)
 library(ggrepel)
 
 raw <- read_sheet("https://docs.google.com/spreadsheets/d/15j-82tISFJKrGKk5sdlE3-S6ge0geWt_xog1lEY7qgE/edit?gid=1754970135#gid=1754970135", sheet = "FARM_WORKERS")
@@ -90,6 +89,22 @@ ggplot()+
                   # na.rm = TRUE)+
   theme(legend.position = "bottom")
 
-raw %>% 
+toba_red<-raw %>% 
   group_by(Commodities) %>%
-  filter(Date==max(Date)|Commodities=="Tobacco"|Commodities=="Red Pepper")
+  filter(Date==max(Date)|Commodities=="Tobacco"|Commodities=="Red Pepper") %>%
+  select(Date,
+         Commodities,
+         `Fee (Rp)`) %>%
+  mutate(relative_cumsum = cumsum(`Fee (Rp)`),
+         label=NA)
+
+toba_red$label[which(toba_red$relative_cumsum == max(toba_red$relative_cumsum))] <- toba_red$Commodities[which(toba_red$relative_cumsum == max(toba_red$relative_cumsum))]
+
+ggplot(toba_red)+
+  aes(x=Date,y=relative_cumsum/9062.73,col=Commodities)+
+  geom_line()+
+  geom_label_repel(aes(label = label),
+                   nudge_x = 1,
+                   na.rm=T)+
+  ylab("Cumulative Cost (¥)")+
+  theme(legend.position = "none")
