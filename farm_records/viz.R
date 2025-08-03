@@ -141,10 +141,12 @@ ggplot(tobacco_red_maize)+
                        y=relative_cumsum*0.0091,
                        label = Commodities),
                    data = label_max)+
-  labs(title = "Cumulative Worker's Expense in Tobacco, Red Pepper and Maize farming in Period of Time",
+  labs(title = "Cumulative Worker's Expense in Tobacco, Red Pepper and Maize farming",
+       subtitle = "Each dot represent the amount of worker's fee for its respective activities",
        y="Cumulative Cost (¥)")+
   theme(legend.position = "none",
         plot.title = element_text(size = 12, face = "bold"),
+        plot.subtitle = element_text(size = 11,face = "italic"),
         axis.title.x = element_text(size = 12, face = "bold.italic"),
         axis.title.y = element_text(size = 12, face = "bold.italic")
   )
