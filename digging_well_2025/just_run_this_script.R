@@ -2,7 +2,7 @@
 library(tidyverse)
 library(googlesheets4)
 library(nnet)
-library(ResourceSelection)
+# library(ResourceSelection)
 library(DescTools)
 library(stargazer)
 library(GGally)
@@ -12,10 +12,13 @@ library(caret)
 library(performance)
 library(pscl)
 
+ml <- read.dta("https://stats.idre.ucla.edu/stat/data/hsbdemo.dta")
+
 raw <-read_sheet("https://docs.google.com/spreadsheets/d/1LiBvcJulFiZJ1l9sqIC489cgQfqeetGHdG1w78tiMEw/edit?gid=0#gid=0")
 
 data <- raw %>%
   mutate(ave_AREA = (area_MT1+area_MT2+area_MT3)/3,
+         total_AREA = area_MT1+area_MT2+area_MT3,
          dMiddle=case_when(
     educ=="SMP" ~ 1,
     educ=="SMA" ~ 1,
@@ -36,7 +39,7 @@ data <- raw %>%
          ext=if_else(extension=="Yes",1,0),
          part=if_else(partnership=="Yes",1,0))
 
-data$cat2 <- relevel(as.factor(data$category),ref = "X")
+data$cat2 <- relevel(as.factor(data$new_category),ref = "A")
 
 mod0 <- cat2 ~ ave_AREA +
   annual_yield +
@@ -45,6 +48,8 @@ mod0 <- cat2 ~ ave_AREA +
   annual_volume +
   digging_well_distance +
   digging_well_depth +
+  pipe_length+
+  horse_power+
   age +
   family_member +
   experience +
@@ -65,6 +70,68 @@ mod1 <- cat2 ~ ave_AREA +
   annual_volume +
   digging_well_distance +
   digging_well_depth +
+  age +
+  family_member +
+  experience +
+  as.factor(assoc) +
+  as.factor(ext) +
+  as.factor(part) +
+  as.factor(dSD) +
+  as.factor(dMiddle) +
+  as.factor(dHigh)+
+  as.factor(location)
+
+mod2 <- cat2 ~ total_AREA +
+  annual_yield +
+  annual_price +
+  annual_cost +
+  annual_volume +
+  digging_well_distance +
+  digging_well_depth +
+  pipe_length+
+  horse_power+
+  age +
+  family_member +
+  experience +
+  as.factor(assoc) +
+  as.factor(ext) +
+  as.factor(part) +
+  as.factor(dSD) +
+  as.factor(dMiddle) +
+  as.factor(dHigh)+
+  as.factor(location)
+
+mod3_total <- cat2 ~ total_AREA +
+  annual_yield +
+  annual_price +
+  annual_cost +
+  fuel_cost +
+  annual_volume +
+  digging_well_distance +
+  digging_well_depth +
+  pipe_length+
+  horse_power+
+  age +
+  family_member +
+  experience +
+  as.factor(assoc) +
+  as.factor(ext) +
+  as.factor(part) +
+  as.factor(dSD) +
+  as.factor(dMiddle) +
+  as.factor(dHigh)+
+  as.factor(location)
+
+mod3_ave <- cat2 ~ ave_AREA +
+  annual_yield +
+  annual_price +
+  annual_cost +
+  fuel_cost +
+  annual_volume +
+  digging_well_distance +
+  digging_well_depth +
+  pipe_length+
+  horse_power+
   age +
   family_member +
   experience +
@@ -100,13 +167,87 @@ mod1_est <- multinom(formula = mod1, data = data %>% select(
 ))
 mod_null <- multinom(cat2 ~ 1, data = data %>% select(
   cat2,
-  ave_AREA,
+  total_AREA,
+  annual_yield,
+  annual_price,
+  annual_cost,
+  fuel_cost,
+  annual_volume,
+  digging_well_distance,
+  digging_well_depth,
+  pipe_length,
+  horse_power,
+  age,
+  family_member,
+  experience,
+  assoc,
+  ext,
+  part,
+  dSD,
+  dMiddle,
+  dHigh,
+  location
+))
+
+mod2_est <- multinom(formula = mod2, data = data %>% select(
+  cat2,
+  total_AREA,
   annual_yield,
   annual_price,
   annual_cost,
   annual_volume,
   digging_well_distance,
   digging_well_depth,
+  pipe_length,
+  horse_power,
+  age,
+  family_member,
+  experience,
+  assoc,
+  ext,
+  part,
+  dSD,
+  dMiddle,
+  dHigh,
+  location
+))
+
+mod3_total_est <- multinom(formula = mod3_total, data = data %>% select(
+  cat2,
+  total_AREA,
+  annual_yield,
+  annual_price,
+  annual_cost,
+  fuel_cost,
+  annual_volume,
+  digging_well_distance,
+  digging_well_depth,
+  pipe_length,
+  horse_power,
+  age,
+  family_member,
+  experience,
+  assoc,
+  ext,
+  part,
+  dSD,
+  dMiddle,
+  dHigh,
+  location
+))
+
+mod3_ave_est <- multinom(formula = mod3_ave, data = data %>% select(
+  cat2,
+  ave_AREA,
+  annual_yield,
+  annual_price,
+  annual_cost,
+  fuel_cost,
+  annual_volume,
+  digging_well_distance,
+  digging_well_depth,
+  pipe_length,
+  horse_power,
   age,
   family_member,
   experience,
@@ -127,24 +268,24 @@ z<-summary(mod1_est)$coefficients/summary(mod1_est)$standard.errors
 p <- (1 - pnorm(abs(z), 0, 1)) * 2
 
 # multicolinearity check
-multicollinearity(mod1_est)
+multicollinearity(mod2_est)
 
 # model fitting
-model_performance(mod1_est, metrics = 'all')
+model_performance(mod3_ave_est, metrics = 'all')
 
 # goodness of fit test
-chisq.test(data$cat2, predict(mod1_est))
+chisq.test(data$cat2, predict(mod3_ave_est))
 
 # Chisq (LRT) test
-anova(mod_null,mod1_est,test = "Chisq")
+anova(mod_null,mod3_ave_est,test = "Chisq")
 #H0 :Variabel independen tidak berpengaruh nyata terhadap variabel dependen
 #H1 :Paling sedikit ada satu variabel
 
 ##### Print Output #####
-stargazer(mod1_est,
+stargazer(mod3_ave_est,
           #poktan.remit.urban,
           #koperasi.remit.urban,
-          title = "Reference: Mixed Pattern (X)",
+          title = "Reference: Food (A)",
           #column.labels = c(),
           intercept.bottom = FALSE,
           #apply.coef = exp,
@@ -153,7 +294,7 @@ stargazer(mod1_est,
           digits = 2,
           report = ('vc*p'),
           type = "text",
-          out = "mod1.txt")
+          out = "mod3_fuel_cost_average_area.txt")
 
 ##### Vizual #####
 ggcoef_multinom(mod1_est,
@@ -190,3 +331,14 @@ ggcoef_multinom(mod1_est)
 ggpredict(mod1_est,terms = "annual_volume") %>%
   ggplot(mapping = aes(x=x, y=predicted, colour = response.level))+
   geom_smooth(se=F,size=1)
+
+prob_mod2 <- as.data.frame(predict(mod2_est, type = "probs", se = TRUE))
+viz_mod2 <- as.data.frame(cbind(data$pipe_length, predict(mod2_est, type = "probs", se = TRUE)))
+stacked_prob_mod2 <- stack(viz_mod2,c("V1","A","B","C"))
+
+stacked_data_with_id <- cbind(
+  Pipe = rep(data$pipe_length, 3), 
+  stack(prob_mod2[, c("A", "B", "C")])
+)
+
+ggplot(stacked_data_with_id, aes(x = Pipe, y = values, colour =ind)) + geom_line() 
