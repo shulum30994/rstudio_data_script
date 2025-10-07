@@ -16,6 +16,13 @@ ml <- read.dta("https://stats.idre.ucla.edu/stat/data/hsbdemo.dta")
 
 raw <-read_sheet("https://docs.google.com/spreadsheets/d/1LiBvcJulFiZJ1l9sqIC489cgQfqeetGHdG1w78tiMEw/edit?gid=0#gid=0")
 
+###### Desc Stats #####
+desc_tabel<-as.data.frame(raw %>%
+  mutate(location=if_else(agglomeration=="urban","LUMAJANG","JEMBER")) %>%
+  group_by(new_category,location) %>%
+  summarise(across(c("pipe_length","annual_volume","annual_yield","digging_well_depth","digging_well_distance"),mean)) %>%
+  print(width = Inf))
+
 data <- raw %>%
   mutate(ave_AREA = (area_MT1+area_MT2+area_MT3)/3,
          total_AREA = area_MT1+area_MT2+area_MT3,
