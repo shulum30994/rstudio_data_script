@@ -20,3 +20,4 @@ df1$col <- df2$kol1[match(df1$kol_id, df2$kol_id)]
 
 # melakukan filter (package dplyr) berdasarkan sebagian karakter/nilai yang ada di kolom
 df %>% filter(grepl("KEYWORD",kolom))
+
