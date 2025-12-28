@@ -73,6 +73,8 @@ tm_shape(jbr_water_all)+
             fontface = "bold.italic")+
   tm_compass(type = "8star",
              position = c("left","top"))+
+  tm_scalebar(position = c('right','top'),
+              text.size = 0.7)+
   tm_layout(legend.show = T,
             panel.label.fontfamily = "mono",
             panel.label.fontface = "bold")
@@ -112,6 +114,8 @@ tm_shape(lmj_water_all)+
             fontface = "bold.italic")+
   tm_compass(type = "8star",
              position = c("left","top"))+
+  tm_scalebar(position = c('right','top'),
+              text.size = 0.7)+
   tm_layout(legend.show = T,
             panel.label.fontfamily = "mono",
             panel.label.fontface = "bold")
