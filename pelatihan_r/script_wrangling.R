@@ -52,6 +52,11 @@ df1$col <- df2$kol1[match(df1$kol_id, df2$kol_id)]
 # col : dapat langsung diganti dengan nama kolom yang akan di-replace
 # kol1 : nilai kolom dari df2 yang akan di-replace ke col di df1
 # kol_id : kolom yang memiliki nilai sama antara df1 dan df2, bisa juga merupakan "primary key"
+
+#### melakukan string concatenation untuk membentu data tanggal berformat YYYY-MM-DD
+df1 %>%
+  select(Year,Month,Day) %>%
+  mutate(Date=if_else(Month<10&Day<10,paste(Year,"-","0",Month,"-","0",Day, sep = ""),if_else(Month<10&Day>=10,paste(Year,"-","0",Month,"-",Day, sep = ""),if_else(Month>=10&Day<10,paste(Year,"-",Month,"-","0",Day, sep = ""),if_else(Month>=10&Day>=10,paste(Year,"-",Month,"-",Day, sep = ""),NA)))))
 ############################################
 
 ##### SORTASI DATA #####
