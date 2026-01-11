@@ -78,4 +78,10 @@ data1$kolom1[!(data1$kolom1 %in% data2$kolom2)] # menampilkan output yang ADA di
 #### Nilai rata-rata tiap negara ####
 dataset1 %>% group_by(Area) %>% summarise(across(c("Value"),.fns=sum)) %>% print(n=131)
 
+#### Mengambil data dari tanggal yang paling baru ####
+dataset %>%
+  group_by(kategori) %>%
+  slice_max(order_by = tanggal,n=1) %>%
+  ungroup()
+
 ####################################################
