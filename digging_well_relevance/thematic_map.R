@@ -1,79 +1,68 @@
+library(tidyverse)
 library(sf)
-library(ggspatial)
+library(tmap)
 
-jember <- read_sf("https://raw.githubusercontent.com/shulum30994/spatial_collection/refs/heads/main/DIGGING_WELL_JEMBER/JEMBER_TANJUNG.geojson")
-lumajang <- read_sf('https://raw.githubusercontent.com/shulum30994/spatial_collection/refs/heads/main/DIGGING_WELL_LUMAJANG/LUMAJANG_BLUKON.geojson')
+##### Read Shapefile #####
+blukon <- read_sf("https://raw.githubusercontent.com/shulum30994/spatial_collection/refs/heads/main/DIGGING_WELL_LUMAJANG/LUMAJANG_BLUKON.geojson")
 
-mt1_plot_jbr <- left_join(jember %>% select(descriptio,geometry), mt1_clean %>% select(Code,Commodities), by=c('descriptio'='Code'))
-mt1_plot_lmj <- left_join(lumajang %>% select(descriptio,geometry), mt1_clean %>% select(Code,Commodities), by=c('descriptio'='Code'))
+sal_tanjung <- read_sf("https://raw.githubusercontent.com/shulum30994/spatial_collection/refs/heads/main/DIGGING_WELL_JEMBER/Primary%20Canal.geojson")
 
-mt2_plot_jbr <- left_join(jember %>% select(descriptio,geometry), mt2_clean %>% select(Code,Commodities), by=c('descriptio'='Code'))
-mt2_plot_lmj <- left_join(lumajang %>% select(descriptio,geometry), mt2_clean %>% select(Code,Commodities), by=c('descriptio'='Code'))
+sal_blukon <- read_sf("https://raw.githubusercontent.com/shulum30994/spatial_collection/refs/heads/main/DIGGING_WELL_LUMAJANG/Secondary%20Canal.geojson")
 
-mt1_plot_jbr<-mt1_plot_jbr %>%
-  na.omit %>%
-  mutate(season='Crop Season 1', location='JEMBER')
+tanjung <- read_sf("https://raw.githubusercontent.com/shulum30994/spatial_collection/refs/heads/main/DIGGING_WELL_JEMBER/JEMBER_TANJUNG.geojson")
 
-mt1_plot_lmj<-mt1_plot_lmj%>%
-  na.omit %>%
-  mutate(season='Crop Season 1', location='LUMAJANG')
+one_df = rbind(mt1_clean,mt2_clean)
 
-mt2_plot_jbr<-mt2_plot_jbr %>%
-  na.omit %>%
-  mutate(season='Crop Season 2', location='JEMBER')
+one_df$season<-factor(one_df$season,
+                    ordered=T,
+                    levels=c(
+  "Wet Season (Jan - April)",
+  "Dry Season (May – July/Aug)"
+))
 
-mt2_plot_lmj<-mt2_plot_lmj %>%
-  na.omit %>%
-  mutate(season='Crop Season 2', location='LUMAJANG')
+blukon_wev <- left_join(blukon,one_df %>% select(Code,Land_val_USD,Water_val_USD,season),by=c("descriptio"="Code"))
 
-all_map_seasons <- bind_rows(mt1_plot_jbr,mt1_plot_lmj,mt2_plot_jbr,mt2_plot_lmj)
+tanjung_wev <- left_join(tanjung,one_df %>% select(Code,Land_val_USD,Water_val_USD,season),by=c("descriptio"="Code"))
 
-mt1_plot %>%
-  na.omit %>%
-  nrow()
 
-mt2_plot %>%
-  na.omit %>%
-  nrow()
-
-mt1_plot_lmj %>%
-  na.omit %>%
-  ggplot()+
-  aes()+
-  geom_sf()
-
-mt2_plot_lmj %>%
-  na.omit %>%
-  ggplot()+
-  aes()+
-  geom_sf()
-
-  jember_comm_change<-ggplot()+
-  aes()+
-  geom_sf(data = jember)+
-    geom_sf(data = all_map_seasons %>% filter(location=='JEMBER'), aes(fill=Commodities))+
-    scale_fill_manual(values = c("Food"="Red","Horticulture"="Yellow","Plantation"="Blue"))+
-    annotation_north_arrow(location="tl",which_north="true")+
-    annotation_scale(location="br")+
-  facet_wrap(location~season)+
-    theme(
-    axis.text = element_blank(),
-    axis.ticks = element_blank()
-  )
-
-lumajang_comm_change<-ggplot()+
-  aes()+
-  geom_sf(data = lumajang)+
-    geom_sf(data = all_map_seasons %>% filter(location=='LUMAJANG'), aes(fill=Commodities))+
-    scale_fill_manual(values = c("Food"="Red","Horticulture"="Yellow","Plantation"="Blue"))+
-    annotation_north_arrow(location="tl",which_north="true")+
-    annotation_scale(location="bl")+
-  facet_wrap(location~season)+
-    theme(
-    axis.text = element_blank(),
-    axis.ticks = element_blank()
-  )
-
-(jember_comm_change/lumajang_comm_change)+
-  plot_layout(guides = "collect") &
-  theme(legend.position = "bottom")
+##### Plotting #####
+#---- Facetted Jember ----
+tm_shape(tanjung_wev)+
+  tm_polygons("Land_val_USD",
+              lwd=0.4,
+              fill.scale = tm_scale_continuous(values = "storm",
+                                               ticks = c(-0.6243404,0.3824438,1.108198,8.586101),
+                                               midpoint = 0.7195517,
+                                               value.na="white"),
+              col_alpha = 0.9,
+              fill.legend = tm_legend(
+                title = "Land Economic Value (USD/sqm) :",
+                na.show = F,
+                position=tm_pos_out("center","bottom"),
+                orientation = "landscape",
+                title.fontfamily = "mono",
+                title.fontface = "bold",
+                text.fontfamily = "mono",
+                text.fontface = "plain"
+                )
+              )+
+  tm_facets_wrap(by="season",
+                 nrow = 1,
+                 drop.NA.facets=T)+
+  tm_shape(sal_tanjung)+
+  tm_lines(col = "blue",
+           lwd=2)+
+  tm_labels("Secondary Canal",
+            ymod = -0.5,
+            angle=40,
+            size = 0.5,
+            col = "blue",
+            fontfamily = "mono",
+            fontface = "bold.italic")+
+  tm_compass(type = "8star",
+             position = c("left","top"))+
+  tm_scalebar(position = c('right','top'),
+              text.size = 0.7)+
+  tm_layout(legend.show = T,
+            panel.label.fontfamily = "mono",
+            panel.label.fontface = "bold")
