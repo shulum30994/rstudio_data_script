@@ -20,10 +20,10 @@ mt3_clean <- mt3 %>% na.omit
 
 mean_tab<-rbind(mt1_clean %>%
   group_by(Commodities,Agglomeration) %>%
-  summarise(across(c('Area_sqm','Water_val_USD','Land_val_USD','Yield_kgsqm','Income_USD','TC_sqm','Fuel_USD_obs','Frequency_obs','Water_sqm','Hours_obs','Pipe_obs','kiloWatt_obs','Age_years','Family_person','Educ_years','Experience_year'),.fns = mean)) %>%
+  summarise(across(c('Area_sqm','Water_val_USD','Land_val_USD','Yield_kgsqm','Revenue_USD_sqm','Income_USD','TC_sqm','Fuel_USD_obs','Frequency_obs','Water_sqm','Hours_obs','Pipe_obs','kiloWatt_obs','Age_years','Family_person','Educ_years','Experience_year'),.fns = mean)) %>%
   mutate(season="MT1"), mt2_clean %>%
   group_by(Commodities,Agglomeration) %>%
-  summarise(across(c('Area_sqm','Water_val_USD','Land_val_USD','Yield_kgsqm','Income_USD','TC_sqm','Fuel_USD_obs','Frequency_obs','Water_sqm','Hours_obs','Pipe_obs','kiloWatt_obs','Age_years','Family_person','Educ_years','Experience_year'),.fns = mean)) %>%
+  summarise(across(c('Area_sqm','Water_val_USD','Land_val_USD','Yield_kgsqm','Revenue_USD_sqm','Income_USD','TC_sqm','Fuel_USD_obs','Frequency_obs','Water_sqm','Hours_obs','Pipe_obs','kiloWatt_obs','Age_years','Family_person','Educ_years','Experience_year'),.fns = mean)) %>%
   mutate(season="MT2"))
 
 demog_sd <- rbind(mt1_clean %>%
@@ -77,6 +77,19 @@ Crop_select=as.factor(case_when(
   Crop == 'Tomat' ~ 8,
   Crop == 'Tebu' ~ 9,
 )),
+Revenue = case_when(
+  Crop == 'Padi' ~ Product_kg*6229.411765,
+  Crop == 'Jagung' ~ Product_kg*5090.909091,
+  Crop == 'Bawang Merah' ~ Product_kg*18500,
+  Crop == 'Cabai Rawit' ~ Product_kg*27250,
+  Crop == 'Cabai Merah' ~ Product_kg*25166.66667,
+  Crop == 'Pepaya' ~ Product_kg*1500,
+  Crop == 'Jeruk' ~ Product_kg*7000,
+  Crop == 'Kacang Tanah' ~ Product_kg*25000,
+  Crop == 'Tomat' ~ Product_kg*1000,
+  Crop == 'Tebu' ~ Product_kg*912.5,
+),
+Revenue_USD_sqm=(Revenue/16368)/Area_sqm,  
 Male=as.factor(if_else(Gender=="LAKI-LAKI",1,0)),
 Educ_years=case_when(
     Education=="SD" ~ 6,  
@@ -117,6 +130,18 @@ Crop_select=as.factor(case_when(
   Crop == 'Tembakau' ~ 7,
   Crop == 'Tebu' ~ 8,
 )),
+Revenue=case_when(
+  Crop == 'Padi' ~ Product_kg*6489.473684,
+  Crop == 'Jagung' ~ Product_kg*5485.714286,
+  Crop == 'Bawang Merah' ~ Product_kg*30000,
+  Crop == 'Cabai Rawit' ~ Product_kg*25041.66667,
+  Crop == 'Cabai Merah' ~ Product_kg*27666.66667,
+  Crop == 'Pepaya' ~ Product_kg*1500,
+  Crop == 'Jeruk' ~ Product_kg*7000,
+  Crop == 'Tembakau' ~ Product_kg*58897.95918,
+  Crop == 'Tebu' ~ Product_kg*8912.5,
+),
+Revenue_USD_sqm=(Revenue/16359)/Area_sqm,
 Male=as.factor(if_else(Gender=="LAKI-LAKI",1,0)),
 Educ_years=case_when(
     Education=="SD" ~ 6,  
@@ -182,6 +207,8 @@ Rural=as.factor(if_else(Agglomeration=="JEMBER",1,0)))
 
 Comm_demog_land_water_val_USD_ind <- Commodities_select ~ Land_val_USD + Water_val_USD + Yield_kgsqm + Frequency_obs + Hours_obs + Pipe_obs + kiloWatt_obs + Fuel_USD_obs + Total_Cost_plot_USD + Exp_obs + Rural
 
+AGRARIS_model<- Commodities_select ~ Land_val_USD + Water_val_USD + Revenue_USD_sqm + Frequency_obs + Hours_obs + Pipe_obs + kiloWatt_obs + Fuel_USD_obs + Total_Cost_plot_USD + Exp_obs + Rural
+
 #Comm_demog_land_water_val_TC_USD_ind <- Commodities_select ~ Land_val_USD + Fuel_USD_obs+ TC_sqm + Water_val_USD + Yield_kgsqm + Frequency_obs + Hours_obs + Pipe_obs + kiloWatt_obs + Exp_obs + Rural
 
 #Comm_demog_land_val_USD_area <- Commodities_select ~ Land_val_USD + Frequency_obs + Hours_obs + Pipe_obs + kiloWatt_obs + kiloWatt_obs + Age_obs + Exp_obs + Educ_obs + Rural
@@ -196,7 +223,7 @@ mod_null1 <- multinom(Commodities_select ~ 1, data = mt1_clean %>%
     Commodities_select,
     Land_val_USD,
     Water_val_USD,
-    Yield_kgsqm,
+    Revenue_USD_sqm,
     Frequency_obs,
     Hours_obs,
     Pipe_obs,
@@ -211,7 +238,7 @@ mod_null2 <- multinom(Commodities_select ~ 1, data = mt2_clean %>%
     Commodities_select,
     Land_val_USD,
     Water_val_USD,
-    Yield_kgsqm,
+    Revenue_USD_sqm,
     Frequency_obs,
     Hours_obs,
     Pipe_obs,
@@ -243,6 +270,8 @@ mod_null2 <- multinom(Commodities_select ~ 1, data = mt2_clean %>%
 #mt2_comm_demog_land_USD_ind <- multinom(Comm_demog_land_val_USD_ind, data = mt2_clean)
 mt1_comm_demog_land_water_USD_ind <- multinom(Comm_demog_land_water_val_USD_ind, data = mt1_clean)
 mt2_comm_demog_land_water_USD_ind <- multinom(Comm_demog_land_water_val_USD_ind, data = mt2_clean)
+mt1_AGRARIS <- multinom(AGRARIS_model, data = mt1_clean)
+mt2_AGRARIS <- multinom(AGRARIS_model, data = mt2_clean)
 #mt1_comm_demog_land_water_TC_USD_area <- multinom(Comm_demog_land_water_val_TC_USD_ind, data = mt1_clean)
 #mt2_comm_demog_land_water_TC_USD_area <- multinom(Comm_demog_land_water_val_TC_USD_ind, data = mt2_clean)
 #mt1_comm_demog_land_USD_area <- multinom(Comm_demog_land_val_USD_area, data = mt1_clean)
@@ -300,8 +329,8 @@ ols_vif_tol(mt2_reg_USD)
 
 
 # Multicoliniearity (correlation plot)
-mt1_clean %>%
-  select(Land_val_USD,Water_val_USD,Yield_kgsqm,Frequency_obs,Hours_obs,Pipe_obs,kiloWatt_obs,Fuel_USD_obs,Total_Cost_plot_USD,Exp_obs) %>%
+mt2_clean %>%
+  select(Land_val_USD,Water_val_USD,Revenue_USD_sqm,Frequency_obs,Hours_obs,Pipe_obs,kiloWatt_obs,Fuel_USD_obs,Total_Cost_plot_USD,Exp_obs) %>%
   cor()%>%
   corrplot(method = 'number',type = 'upper')
 
@@ -319,24 +348,24 @@ dwtest(mt3_water_est)
 exp(coef(mt2_comm_demog_land_water_USD_ind))
 
 # Pseudo R-Square
-model_performance(mt1_comm_demog_land_water_USD_ind, metrics = 'all')
+model_performance(mt2_AGRARIS, metrics = 'all')
 
 # LR-test
-LR_test_mt1<-anova(mod_null1,mt1_comm_demog_land_water_USD_ind,test = "Chisq")
+LR_test_mt1<-anova(mod_null2,mt2_AGRARIS,test = "Chisq")
 
 #### Output Print ####
-stargazer(mt1_comm_demog_land_water_USD_ind,
-  mt2_comm_demog_land_water_USD_ind,
+stargazer(mt1_AGRARIS,
+  mt2_AGRARIS,
           #poktan.remit.urban,
           #koperasi.remit.urban,
           title = "Multinomial Logistic Regression Result (Baseline Cat : Foods)",
           #column.labels = c('Season 1','Season 2'),
           intercept.bottom = FALSE,
           #decimal.mark="::::",
-          apply.coef = exp,
+          #apply.coef = exp,
           p.auto = FALSE,
           t.auto = FALSE,
           #digits = 0,
           report = ('vc*p'),
           type = "text",
-          out = "default_result.html")
+          out = "AGRARIS_mt1_mt2_coef.html")
