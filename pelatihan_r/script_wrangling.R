@@ -2,6 +2,16 @@ library(tidyverse)
 
 #### Ini adalah bookmark ####
 
+###### MEMPEROLEH (RETRIEVE) DATA #####
+#### Mendapatkan data dengan tipe file .csv ####
+dataset1 <- read.csv('lokasi file/url')
+
+#### Mendapatkan data file .csv dengan separator (;) ####
+dataset1 <- read.csv('lokasi file/url', sep=';')
+
+#### Jika jumlah kolom terlalu banyak/tidak sesuai header ####
+dataset1 <- read.csv('lokasi file/url', fill=TRUE)
+
 ###### MENYUNTING TABEL #####
 #### Preview data ####
 View(dataset1)
