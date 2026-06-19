@@ -14,7 +14,11 @@ MT2_revenue,
 MT3_revenue,
 MT1_cost,
 MT2_cost,
-MT3_cost) %>%
+MT3_cost) 
+
+data$area_MT2 <- replace(data$area_MT2, data$area_MT2 %in% c(0.00, 0.00), c(0.2957, 0.2301))
+
+data<-data %>%
   separate(crop_pattern, into=c('MT1_comm', 'MT2_comm', 'MT3_comm'), sep = '-') %>%
   mutate(MT1_income=MT1_revenue-MT1_cost,
   MT2_income=MT2_revenue-MT1_cost,
@@ -27,7 +31,19 @@ delta2=MT3_income_acre-MT2_income_acre) %>%
   na.omit
 
 data %>%
-  filter(MT1_comm %in% c('Padi', 'Jagung') & MT2_comm %in% c('Bawang Merah','Tembakau','Cabai Merah'), delta1 > 0) %>%
+  filter(MT1_comm %in% c('Padi', 'Jagung') & MT1_comm %in% c('Padi', 'Jagung')) %>%
+  ggplot+
+  aes(x=as.factor(parent_id), y=delta1, fill=MT2_comm)+
+  geom_col()
+
+data %>%
+  filter(MT1_comm %in% c('Padi', 'Jagung') & MT1_comm %in% c('Bawang Merah', 'Cabari Rawit')) %>%
+  ggplot+
+  aes(x=as.factor(parent_id), y=delta1, fill=MT2_comm)+
+  geom_col()
+
+data %>%
+  filter(MT1_comm %in% c('Padi', 'Jagung') & MT2_comm %in% c('Bawang Merah','Tembakau','Cabai Rawit')) %>%
   ggplot+
   aes(x=as.factor(parent_id), y=delta1, fill=MT2_comm)+
   geom_col()
