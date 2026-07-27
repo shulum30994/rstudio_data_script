@@ -46,7 +46,7 @@ talang_division %>%
   tm_polygons("AREA_DIVISION",
               lwd = 0.5,
               fill.scale = tm_scale_categorical(
-                values = c("Upper"="#CCF8BF", "Mid"="#8BEE6D", "Lower"="#3CBB16")
+                values = c("Upstream"="#CCF8BF", "Mid"="#8BEE6D", "Downstream"="#3CBB16")
               ),
               fill.legend = tm_legend(
                 title = "Keterangan :",
