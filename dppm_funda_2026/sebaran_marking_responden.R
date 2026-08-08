@@ -8,7 +8,11 @@ resp_csa<-read_sheet('https://docs.google.com/spreadsheets/d/1EvmIAri2-BDz43-BhR
 
 resp_gender<-read_sheet('https://docs.google.com/spreadsheets/d/1M762oiKlf32lAQKrDZoc0KCvkgjJOr_rYhFSN2Ijiz0/edit?gid=950375195#gid=950375195')
 
-resp_csa_sf <- st_as_sf(resp_csa,
+csa_score <- read_xlsx('/home/shohibul/KERJA/DATA/DPPM dikti 2026/processing_data_csa.xlsx')
+
+resp_csa_score <- left_join(resp_csa, csa_score %>% select(`_index`,CSSA_score), by=c('KOBO_PARENT'='_index'))
+
+resp_csa_sf <- st_as_sf(resp_csa_score %>% na.omit,
                          coords=c('LONG', 'LAT'),
                          crs=4326)
 
@@ -18,9 +22,9 @@ resp_gender_sf <- st_as_sf(resp_gender,
 
 division <- read_sheet('https://docs.google.com/spreadsheets/d/1TL19mnRCUviuxIq_sDRjgWGO_d15UcIvCoStMDZJKUk/edit?gid=0#gid=0', sheet = 'IDENTITY')
 
-talang <- read_sf('G:\\2023\\DIGITASI TALANG\\TALANG MAP\\GRAND DATA\\ADM_AREA.shp')
+talang <- read_sf('/home/shohibul/KERJA/DATA/Irigasi Talang 2023/TALANG MAP/GRAND DATA/ADM_AREA.shp')
 
-canal <- read_sf('G:\\2023\\DIGITASI TALANG\\TALANG MAP\\GRAND DATA\\IRRIGATION.shp')
+canal <- read_sf('/home/shohibul/KERJA/DATA/Irigasi Talang 2023/TALANG MAP/GRAND DATA/IRRIGATION.shp')
 
 canal$GID_4 <- replace(canal$GID_4, canal$GID_4 %in% c("IDN.11.8.29.7_1"), c("IDN.11.8.29.6_1")) # replace data GID_4 Desa Sukodadi dengan IDN.11.8.29.6_1
 
@@ -40,8 +44,9 @@ write.csv(st_drop_geometry(vill),
           row.names=FALSE)
 
 #### TALANG ####
+#### Sebaran Responden ###
 talang_division %>%
-  #filter(GID_4=='IDN.11.8.2.2_1') %>%
+  #filter(GID_4=='IDN.11.8.2.2_1' |GID_4=='IDN.11.8.2.2_1'|GID_4=='IDN.11.8.2.1_1'|GID_4=='IDN.11.8.8.2_1'|GID_4=='IDN.11.8.8.1_1'|GID_4=='IDN.11.8.8.8_1') %>%
   tm_shape()+
   tm_polygons("AREA_DIVISION",
               lwd = 0.5,
@@ -64,12 +69,24 @@ talang_division %>%
   tm_shape(canal_division)+
   tm_lines(lwd = 0.8, col = "blue")+
   tm_facets(by='AREA_DIVISION')+
-  #tm_shape(resp_csa_sf)+
-  tm_shape(resp_gender_sf)+
-  tm_dots(fill = 'black', size = 0.4)+
+  tm_shape(resp_csa_sf)+
+  #tm_shape(resp_gender_sf)+
+  tm_dots(
+    fill="CSSA_score",
+    fill.scale=tm_scale_intervals(
+      breaks=c(25,44,64,84,104,125),
+      values=c("#FF0000","#FFA500","#FFFF00","#78C679","#238443")
+    ),
+    size="CSSA_score",
+    size.scale=tm_scale_intervals(
+      breaks=c(25,44,64,84,104,125),
+      values=c(0.5, 1, 1.5, 2, 2.5)
+    )
+  )+
+  tm_facets(by='AREA_DIVISION')+
   tm_compass(position = c("right","top"))+
   tm_scalebar(position = c("left","top"))+
-  tm_title("Sebaran Responden CSA Gender")+
+  tm_title("Sebaran Responden CSA Padi")+
   tm_add_legend(
     type = "line",
     labels = "Saluran Irigasi",
@@ -89,6 +106,59 @@ talang_division %>%
     fontfamily = "Times New Roman"
   )
 
+
+#### Sebaran Responden Warna dan Ukuran###
+csa_score_map<-talang_division %>%
+  #filter(GID_4=='IDN.11.8.2.2_1' |GID_4=='IDN.11.8.2.2_1'|GID_4=='IDN.11.8.2.1_1'|GID_4=='IDN.11.8.8.2_1'|GID_4=='IDN.11.8.8.1_1'|GID_4=='IDN.11.8.8.8_1') %>%
+  tm_shape()+
+  tm_borders()+
+  tm_text(
+    text='NAME_4',
+    fontface='italic',
+    fontfamily = 'Times New Roman'
+  )+
+  tm_facets(by='AREA_DIVISION', ncol = 1)+
+  tm_shape(canal_division)+
+  tm_lines(lwd = 0.8, col = "blue")+
+  tm_shape(resp_csa_sf)+
+  #tm_shape(resp_gender_sf)+
+  tm_dots(
+    fill="CSSA_score",
+    fill.scale=tm_scale_intervals(
+      breaks=c(25,44,64,84,104,125),
+      values=c("#FF0000","#FFA500","#FFFF00","#78C679","#238443")
+    ),
+    size="CSSA_score",
+    size.scale=tm_scale_intervals(
+      breaks=c(25,44,64,84,104,125),
+      values=c(0.5, 1, 1.5, 2, 2.5)
+    ),
+    fill.legend = tm_legend(title = "Skor CSSA :"),
+    size.legend = tm_legend(show = FALSE)
+  )+
+  tm_facets(by='AREA_DIVISION', ncol = 1)+
+  tm_compass(position = c("right","top"))+
+  tm_scalebar(position = c("left","top"))+
+  tm_title("Sebaran Skor CSSA Responden")+
+  tm_add_legend(
+    type = "line",
+    labels = "Saluran Irigasi",
+    col = "blue",
+    lwd=2
+  )+
+  tm_layout(
+    legend.title.size=1.1,
+    legend.text.size=0.8,
+    fontfamily = "Times New Roman"
+  )
+
+tmap_save(
+  csa_score_map,
+  filename = "sebaran_skor_csa.png",
+  width = 4000,
+  height = 3000,
+  units = 'px'
+)
 #### Wilalung ####
 # Convert to sf features
 koor<- st_as_sf(nama_petani,
