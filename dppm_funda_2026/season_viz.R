@@ -44,3 +44,10 @@ caption="Sumber : Hasil Survey")+
 plot.subtitle=element_text(fontface="italic"),
 axis.text.y = element_blank())
 
+### Scatter plot ###
+ggplot(var_cor %>% mutate(eko_score=eko_19.cssa_efisiensi+eko_20.css_kualitas+eko_21.jaringan_pemasaran+eko_22.hubungan_pemasar+eko_23.harga_gabah+eko_24.produksi_gabah,
+adapt_score=adapt_1.penyesuaian_waktu+adapt_2.lebih_satu_tanaman+adapt_3.varietas_tahan,
+mitigasi_score=miti_6.sisa_tanaman+miti_7.irigasi+miti_8.pupuk_kimia+miti_9.pestisida_kimia+miti_10.pestisida_nabati))+
+  aes(x=age, y=CSSA_score, colour=samp_div)+
+  geom_point(size=3)+
+  geom_smooth(method = 'lm')
