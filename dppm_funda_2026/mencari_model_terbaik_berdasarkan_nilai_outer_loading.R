@@ -276,3 +276,158 @@ summ_CSA_SEM8<- summary(CSA_SEM8)
 summ_CSA_SEM8$reliability
 summ_CSA_SEM8$loadings
 summ_CSA_SEM8$vif_antecedents
+
+##### CSA9 ######
+CSA_meas9 <- constructs(
+  composite("ROG", c("d1_2","d1_4","d2_1","d2_2","d2_3","d2_4","d2_5","d4_1","d4_2","d4_4")),
+  composite("ROF", c("e1_1","e1_2","e1_3","e1_4","e2_1","e2_2","e2_3","e2_4","e2_5","e3_1","e3_2","e3_3","e3_4")),
+  composite("GFP", c("f1_1","f1_2","f1_3","f1_4","f3_1","f3_3","f3_4")),
+  composite("CS_Practice", c("lingkungan2_2","produksi4_5","sosial5_2", "sosial5_3")),
+  composite("CS_Adopt_Perc", c("g1_2","g1_3","g1_4","g1_5","g2_2","g2_3","g2_4")),
+  composite("SOFAR", c("downstream","log_labour"),weights = mode_B)
+)
+
+CSA_stru9 <- relationships(
+  paths(from=c("ROF","ROG"), to=c("GFP")),
+  paths(from=c("GFP"),to=c("CS_Adopt_Perc")),
+  paths(from=c("SOFAR"), to=c("ROF")),
+  paths(from=c("CS_Adopt_Perc","SOFAR","ROF"), to=c("CS_Practice"))
+)
+
+CSA_SEM9<- estimate_pls(
+  data = fisik_sem ,
+  measurement_model = CSA_meas9,
+  structural_model = CSA_stru9,
+  inner_weight = path_weighting,
+  missing = mean_replacement,
+  missing_value = "-99"
+)
+
+summ_CSA_SEM9<- summary(CSA_SEM9)
+summ_CSA_SEM9$reliability
+summ_CSA_SEM9$loadings
+summ_CSA_SEM9$vif_antecedents
+
+##### CSA10 ######
+CSA_meas10 <- constructs(
+  composite("ROG", c("d1_4","d2_1","d2_2","d2_3","d2_4","d2_5","d4_1","d4_2","d4_4")),
+  composite("ROF", c("e1_1","e1_2","e1_3","e1_4","e2_1","e2_2","e2_3","e2_4","e2_5","e3_1","e3_2","e3_3","e3_4")),
+  composite("GFP", c("f1_1","f1_2","f1_3","f1_4","f3_1","f3_3","f3_4")),
+  composite("CS_Practice", c("lingkungan2_2","produksi4_5","sosial5_2", "sosial5_3")),
+  composite("CS_Adopt_Perc", c("g1_2","g1_3","g1_4","g1_5","g2_2","g2_3","g2_4")),
+  composite("SOFAR", c("downstream","log_labour"))
+)
+
+CSA_stru10 <- relationships(
+  paths(from=c("ROF","ROG"), to=c("GFP")),
+  paths(from=c("GFP"),to=c("CS_Adopt_Perc")),
+  paths(from=c("SOFAR"), to=c("ROF")),
+  paths(from=c("CS_Adopt_Perc","SOFAR","ROF"), to=c("CS_Practice"))
+)
+
+CSA_SEM10<- estimate_pls(
+  data = fisik_sem ,
+  measurement_model = CSA_meas10,
+  structural_model = CSA_stru10,
+  inner_weight = path_weighting,
+  missing = mean_replacement,
+  missing_value = "-99"
+)
+
+summ_CSA_SEM10<- summary(CSA_SEM10)
+summ_CSA_SEM10$reliability
+summ_CSA_SEM10$loadings
+summ_CSA_SEM10$vif_antecedents
+
+##### CSA11 ######
+CSA_meas11 <- constructs(
+  composite("ROG", c("d2_1","d2_2","d2_3","d2_4","d2_5","d4_1","d4_2","d4_4")),
+  composite("ROF", c("e1_1","e1_2","e1_3","e1_4","e2_1","e2_2","e2_3","e2_4","e2_5","e3_1","e3_2","e3_3","e3_4")),
+  composite("GFP", c("f1_1","f1_2","f1_3","f1_4","f3_1","f3_3","f3_4")),
+  composite("CS_Practice", c("lingkungan2_2","produksi4_5","sosial5_2", "sosial5_3")),
+  composite("CS_Adopt_Perc", c("g1_2","g1_3","g1_4","g1_5","g2_2","g2_3","g2_4")),
+  composite("SOFAR", c("downstream","log_labour"))
+)
+
+CSA_stru11 <- relationships(
+  paths(from=c("ROF","ROG"), to=c("GFP")),
+  paths(from=c("GFP"),to=c("CS_Adopt_Perc")),
+  paths(from=c("SOFAR"), to=c("ROF")),
+  paths(from=c("CS_Adopt_Perc","SOFAR","ROF"), to=c("CS_Practice"))
+)
+
+CSA_SEM11<- estimate_pls(
+  data = fisik_sem ,
+  measurement_model = CSA_meas11,
+  structural_model = CSA_stru11,
+  inner_weight = path_weighting,
+  missing = mean_replacement,
+  missing_value = "-99"
+)
+
+summ_CSA_SEM11<- summary(CSA_SEM11)
+summ_CSA_SEM11$reliability
+summ_CSA_SEM11$loadings
+summ_CSA_SEM11$vif_antecedents
+
+##### CSA12 (try remove all < 0.7 loadings ######
+CSA_meas12 <- constructs(
+  composite("ROG", c("d2_1","d2_2","d2_3","d2_4","d2_5")),
+  composite("ROF", c("e1_2","e1_3","e1_4","e2_1","e2_2","e2_3","e2_5","e3_1","e3_2","e3_3")),
+  composite("GFP", c("f1_1","f1_2","f1_3","f1_4","f3_1")),
+  composite("CS_Practice", c("lingkungan2_2","produksi4_5","sosial5_2", "sosial5_3")),
+  composite("CS_Adopt_Perc", c("g1_3","g1_4","g1_5","g2_2","g2_3","g2_4")),
+  composite("SOFAR", c("downstream","log_labour"))
+)
+
+CSA_stru12 <- relationships(
+  paths(from=c("ROF","ROG"), to=c("GFP")),
+  paths(from=c("GFP"),to=c("CS_Adopt_Perc")),
+  paths(from=c("SOFAR"), to=c("ROF")),
+  paths(from=c("CS_Adopt_Perc","SOFAR","ROF"), to=c("CS_Practice"))
+)
+
+CSA_SEM12<- estimate_pls(
+  data = fisik_sem ,
+  measurement_model = CSA_meas12,
+  structural_model = CSA_stru12,
+  inner_weight = path_weighting,
+  missing = mean_replacement,
+  missing_value = "-99"
+)
+
+summ_CSA_SEM12<- summary(CSA_SEM12)
+summ_CSA_SEM12$reliability
+summ_CSA_SEM12$loadings
+summ_CSA_SEM12$vif_antecedents
+
+##### CSA13 (try remove all < 0.7 loadings ######
+CSA_meas13 <- constructs(
+  composite("ROG", c("d2_1","d2_2","d2_3","d2_4","d2_5")),
+  composite("ROF", c("e1_2","e1_3","e1_4","e2_1","e2_2","e2_3","e2_5","e3_1","e3_2")),
+  composite("GFP", c("f1_1","f1_2","f1_3","f1_4")),
+  composite("CS_Practice", c("sosial5_2", "sosial5_3")),
+  composite("CS_Adopt_Perc", c("g1_3","g1_4","g2_2","g2_3","g2_4")),
+  composite("SOFAR", c("downstream","log_labour"))
+)
+
+CSA_stru13 <- relationships(
+  paths(from=c("ROF","ROG"), to=c("GFP")),
+  paths(from=c("GFP"),to=c("CS_Adopt_Perc")),
+  paths(from=c("SOFAR"), to=c("ROF")),
+  paths(from=c("CS_Adopt_Perc","SOFAR","ROF"), to=c("CS_Practice"))
+)
+
+CSA_SEM13<- estimate_pls(
+  data = fisik_sem ,
+  measurement_model = CSA_meas13,
+  structural_model = CSA_stru13,
+  inner_weight = path_weighting,
+  missing = mean_replacement,
+  missing_value = "-99"
+)
+
+summ_CSA_SEM13<- summary(CSA_SEM13)
+summ_CSA_SEM13$reliability
+summ_CSA_SEM13$loadings
+summ_CSA_SEM13$vif_antecedents
