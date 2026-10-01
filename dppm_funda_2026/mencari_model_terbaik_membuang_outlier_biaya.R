@@ -334,6 +334,18 @@ summ_CSA_SEM_out9A$reliability
 summ_CSA_SEM_out9A$loadings
 write.csv(summ_CSA_SEM_out9A$reliability,"G:\\R_Workspace\\SEM_R_csa\\csa_sem_free_out_result\\CSA_SEM_out9A_rel.csv")
 write.csv(summ_CSA_SEM_out9A$loadings,"G:\\R_Workspace\\SEM_R_csa\\csa_sem_free_out_result\\CSA_SEM_out9A_loading.csv")
+boot_CSA_SEM9A <- bootstrap_model(seminr_model = CSA_SEM_out9A, nboot = 1000)
+sum_CSA_SEM_out9A <- summary(CSA_SEM_out9A, alpha = 0.10)
+plot(boot_CSA_SEM9A, title = "Hasil Bootstrap Model 9A")
+graph <- plot(boot_CSA_SEM9A, title = "Hasil Bootstrap Model 9A")
+svg_graph <- export_svg(graph)
+bg_css <- "svg { background-color: #ffcc00; }"
+rsvg_png(
+  svg = charToRaw(svg_graph),
+  file = "bootstrap_SEM9_model.png",
+  width = 1920,
+  height = 1080
+)
 
 ###### CSA-OUT9B [SOFAR -> ROG] ######
 CSA_meas_out9B <- constructs(
