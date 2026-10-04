@@ -307,8 +307,8 @@ write.csv(summ_CSA_SEM_out9$loadings,"G:\\R_Workspace\\SEM_R_csa\\csa_sem_free_o
 
 ###### CSA-OUT9A [SOFAR -> ROF] ######
 CSA_meas_out9A <- constructs(
-  composite("ROF", c("d2_1","d2_2","d2_3","d2_4","d2_5","d4_1","d4_3","d4_4")),
-  composite("ROG", c("e1_1","e1_2","e1_3","e1_4","e2_2","e2_3","e2_5","e3_1","e3_2","e3_3","e3_4")),
+  composite("ROG", c("d2_1","d2_2","d2_3","d2_4","d2_5","d4_1","d4_3","d4_4")),
+  composite("ROF", c("e1_1","e1_2","e1_3","e1_4","e2_2","e2_3","e2_5","e3_1","e3_2","e3_3","e3_4")),
   composite("GFP", c("f1_1","f1_2","f1_3","f1_4","f3_1")),
   composite("CSA_Adopt", c("g1_2","g1_3","g1_4","g1_5","g2_2","g2_3","g2_4")),
   composite("SOFAR", c("mid","total_biaya_obat_Rp","biaya_tk_upahan","total_biaya_tk"))
@@ -349,8 +349,8 @@ rsvg_png(
 
 ###### CSA-OUT9B [SOFAR -> ROG] ######
 CSA_meas_out9B <- constructs(
-  composite("ROF", c("d2_1","d2_2","d2_3","d2_4","d2_5","d4_1","d4_3","d4_4")),
-  composite("ROG", c("e1_1","e1_2","e1_3","e1_4","e2_2","e2_3","e2_5","e3_1","e3_2","e3_3","e3_4")),
+  composite("ROG", c("d2_1","d2_2","d2_3","d2_4","d2_5","d4_1","d4_3","d4_4")),
+  composite("ROF", c("e1_1","e1_2","e1_3","e1_4","e2_2","e2_3","e2_5","e3_1","e3_2","e3_3","e3_4")),
   composite("GFP", c("f1_1","f1_2","f1_3","f1_4","f3_1")),
   composite("CSA_Adopt", c("g1_2","g1_3","g1_4","g1_5","g2_2","g2_3","g2_4")),
   composite("SOFAR", c("mid","total_biaya_obat_Rp","biaya_tk_upahan","total_biaya_tk"))
