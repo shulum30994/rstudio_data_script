@@ -1,5 +1,5 @@
 # Mengambil dataset secara online
-ret1 <- read.csv(“https://raw.githubusercontent.com/shulum30994/rstudio_data_script/main/rfm_pwt/customer_shopping_data.csv”)
+ret1 <- read.csv('https://raw.githubusercontent.com/shulum30994/rstudio_data_script/main/rfm_pwt/customer_shopping_data.csv')
 
 # Pasang packages yang dibutuhkan
 Install.packages(dplyr)
@@ -31,7 +31,7 @@ rfm_ret1 <- rfm_table_order(
             customer_id = customer_id,
             revenue = revenue,
             order_date = date,
-            analysis_date = as.Date(“2023-03-08”))
+            analysis_date = as.Date('2023-03-08'))
 
 # Menampilkan hasil analisis RFM
 rfm_ret1
@@ -46,16 +46,16 @@ rfm_plot_bar_chart(rfm_ret1)
 rfm_df <- as.data.frame(rfm_ret1$rfm)
 
 # Kriteria masing-masing segmen :
-segment_names = c("Champions",
-                  “Potential Loyalist",
-                  "Loyal Customers",
-                  "Promising",
-                  "New Customers",
-                  "Can't Lose Them",
-                  "At Risk",
-                  "Need Attention",
-                  "About To Sleep",
-                  "Lost")
+segment_names = c('Champions',
+                  'Potential Loyalist',
+                  'Loyal Customers',
+                  'Promising',
+                  'New Customers',
+                  'Cant Lose Them',
+                  'At Risk',
+                  'Need Attention',
+                  'About To Sleep',
+                  'Lost')
 
 # Tentukan batas atas-bawah masing-masing kriteria:
 recency_lower <-   c(5, 3, 2, 3, 4, 1, 1, 1, 2, 1)
