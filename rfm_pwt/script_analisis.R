@@ -1,5 +1,5 @@
 # Mengambil dataset secara online
-ret1 <- read.csv(“https://raw.githubusercontent.com/shulum30994/rstudio_data_script/main/rfm_pwt/customer_shopping_data.csv”
+ret1 <- read.csv(“https://raw.githubusercontent.com/shulum30994/rstudio_data_script/main/rfm_pwt/customer_shopping_data.csv”)
 
 # Pasang packages yang dibutuhkan
 Install.packages(dplyr)
