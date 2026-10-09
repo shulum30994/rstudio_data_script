@@ -36,6 +36,9 @@ rfm_ret1 <- rfm_table_order(
 # Menampilkan hasil analisis RFM
 rfm_ret1
 
+# if customer_id did not show as unique id, run the code below
+rfm_ret1 <- rfm_ret1[!duplicated(rfm_ret1$customer_id), ]
+
 # Visualisasi heatmap hasil penghitungan RFM
 rfm_plot_heatmap(rfm_ret1)
 
