@@ -12,7 +12,9 @@ clus_rfm <- rfm_kopi_901212000_df %>%
          monetary_score,
          rfm_score)
 
+row_names(customer_id) <- NULL # drop the previous rownames if necessary
 rownames(clus_rfm)<-clus_rfm$customer_id
+clus_rfm <- tibble::column_to_rownames(clus_rfm, var = "customer_id")
 
 numeric_df <- clus_rfm %>% select(recency_days,
                                   transaction_count,
