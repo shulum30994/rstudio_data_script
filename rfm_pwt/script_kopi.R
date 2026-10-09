@@ -4,9 +4,9 @@ library(tidyr)
 library(ragg)
 library(rfm)
 
-kopi <- read.csv("https://raw.githubusercontent.com/shulum30994/rstudio_data_script/refs/heads/main/rfm_pwt/sudah_gabung_semua.csv")
+kopi <- read.csv('https://raw.githubusercontent.com/shulum30994/rstudio_data_script/refs/heads/main/rfm_pwt/sudah_gabung_semua.csv')
 
-metadata<-read.csv("https://raw.githubusercontent.com/shulum30994/rstudio_data_script/refs/heads/main/rfm_pwt/pedoman_kode_HS_kolom.csv")
+metadata<-read.csv('https://raw.githubusercontent.com/shulum30994/rstudio_data_script/refs/heads/main/rfm_pwt/pedoman_kode_HS_kolom.csv')
 
 # Coffee, roasted, not decaffeinated, unground
 kopi_901212000 <- kopi %>% filter(HSCODE==901212000)
@@ -17,7 +17,7 @@ kopi_901212000 <- kopi_901212000 %>% mutate(YEAR_DATE=paste("1",PROCMTH,PROCYEAR
 # visualize quantity against date
 kopi_901212000 %>%
   ggplot()+
-  aes(x=YEAR_DATE,y=VAL/1000)+
+  aes(x=x=as.Date(YEAR_DATE, format='%d/%M/%Y'),y=VAL/1000)+
   geom_point(aes(colour =REG))+
   theme(legend.position = "none")
 
@@ -27,7 +27,7 @@ kopi_901212000 <- kopi_901212000 %>% mutate(YEAR_DATE=as.Date(strptime(YEAR_DATE
 # check last transaction date
 kopi_901212000 %>% arrange(desc(YEAR_DATE)) %>% head(5)
 
-# perform RFM analysis
+# perform RFM analysis (change "DESTCTRY_L" to "customer_id" if necessary)
 rfm_kopi_901212000 <- rfm_table_order(
   data=kopi_901212000,
   customer_id = DESTCTRY_L,
@@ -35,6 +35,9 @@ rfm_kopi_901212000 <- rfm_table_order(
   order_date = YEAR_DATE,
   analysis_date = as.Date("2016-12-02")
 )
+
+# if customer_id did not show as unique id, run the code below
+rfm_kopi_901212000 <- rfm_kopi_901212000[!duplicated(rfm_kopi_901212000$customer_id), ]
 
 # convert into dataframe
 rfm_kopi_901212000_df <- as.data.frame(rfm_kopi_901212000$rfm)
