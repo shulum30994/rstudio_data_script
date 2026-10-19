@@ -1,5 +1,8 @@
 library(factoextra)
+library(cluster)
+library(dplyr)
 
+rfm_segment <- read.csv("https://raw.githubusercontent.com/shulum30994/rstudio_data_script/refs/heads/main/rfm_pwt/hasil_rfm_kopi.csv") #gunakan data ini jika belum melakukan analisis RFM
 # Penggabungan data
 rfm_segment <- left_join(
   segments %>%
@@ -20,6 +23,9 @@ rfm_segment <- left_join(
               sum_NETWT=sum(NETWT)),
   by=c("customer_id"="DESTCTRY")
 )
+
+row_names(DESTCTRY) <- NULL # drop the previous rownames if necessary
+rownames(DESTCTRY)<-rfm_segment$DESTCTRY
 
 # Scaling (normalisasi) data
 rfm_segment_scaled <- scale(rfm_segment %>%
